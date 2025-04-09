@@ -4,7 +4,7 @@ pipeline {
     agent any 
     tools {
         jdk 'jdk'
-        nodejs 'nodejs'
+        maven 'maven'
     }
     environment  {
         AWS_ACCOUNT_ID = credentials('ACCOUNT_ID')
@@ -28,6 +28,13 @@ pipeline {
             steps {
                 dir('backend') {
                     sh 'trivy fs . > trivyfs.txt'
+                }
+            }
+        }
+        stage("Build with Maven") {
+            steps {
+                dir('backend') {
+                    sh 'mvn clean package -DskipTests'
                 }
             }
         }
@@ -85,4 +92,3 @@ pipeline {
         }
     }
 }
-
