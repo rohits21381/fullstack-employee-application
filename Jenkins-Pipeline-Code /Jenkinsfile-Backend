@@ -20,13 +20,13 @@ pipeline {
         }
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/CloudTechDevOps/2nd10WeeksofCloudOps-main.git'
+                git branch: 'main', url: 'https://github.com/rohits21381/2nd10WeeksofCloudOps-main.git'
             }
         }
         
         stage('Trivy File Scan') {
             steps {
-                dir('backend') {
+                dir('employeemanagmentbackend') {
                     sh 'trivy fs . > trivyfs.txt'
                 }
             }
@@ -41,7 +41,7 @@ pipeline {
         stage("Docker Image Build") {
             steps {
                 script {
-                    dir('backend') {
+                    dir('employeemanagmentbackend') {
                             sh 'docker system prune -f'
                             sh 'docker container prune -f'
                             sh 'docker build -t ${AWS_ECR_REPO_NAME} .'
@@ -65,20 +65,20 @@ pipeline {
         }
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/CloudTechDevOps/2nd10WeeksofCloudOps-main.git'
+                git branch: 'main', url: 'https://github.com/rohits21381/2nd10WeeksofCloudOps-main.git'
             }
         }
         stage('Update Deployment file') {
             environment {
                 GIT_REPO_NAME = "2nd10WeeksofCloudOps-main"
-                GIT_USER_NAME = "CloudTechDevOps"
+                GIT_USER_NAME = "rohits21381"
             }
             steps {
                 dir('kubernetes-files') {
                     withCredentials([string(credentialsId: 'my-git-pattoken', variable: 'git_token')]) {
                         sh '''
-                            git config user.email "cloud87777@gmail.com"
-                            git config user.name "CloudTechDevOps"
+                            git config user.email "rohit.shinde9509@gmail.com"
+                            git config user.name "rohits21381"
                             BUILD_NUMBER=${BUILD_NUMBER}
                             echo $BUILD_NUMBER
                             sed -i "s#image:.*#image: $REPOSITORY_URI$AWS_ECR_REPO_NAME:$BUILD_NUMBER#g" backend-deployment.yaml
