@@ -24,7 +24,7 @@ pipeline {
         
         stage('Trivy File Scan') {
             steps {
-                dir('client') {
+                dir('employeemanagement-frontend') {
                     sh 'trivy fs . > trivyfs.txt'
                 }
             }
