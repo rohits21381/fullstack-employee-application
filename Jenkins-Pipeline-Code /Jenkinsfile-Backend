@@ -33,7 +33,7 @@ pipeline {
         }
         stage("Build with Maven") {
             steps {
-                dir('backend') {
+                dir('employeemanagmentbackend') {
                     sh 'mvn clean package -DskipTests'
                 }
             }
