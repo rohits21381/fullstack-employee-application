@@ -1,23 +1,29 @@
-# Use an official Node.js runtime as a parent image
-FROM node:18
+# Stage 1: Build React App
+FROM node:18 AS build
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copy the rest of the application code
 COPY . .
+RUN npm run build
 
-# Expose the port your app runs on
-EXPOSE 3000
+# Stage 2: Serve with Apache HTTP Server
+FROM httpd:2.4
 
-# Start the app
-CMD ["npm", "start"]
+# Copy the build output from the previous stage
+COPY --from=build /app/build /usr/local/apache2/htdocs/
+
+# Copy the startup script
+# COPY entrypoint.sh /entrypoint.sh
+# RUN chmod +x /entrypoint.sh
+
+# Expose port 80
+EXPOSE 80
+
+# Run the script before starting Apache
+CMD ["httpd-foreground"]
 
 
 # # Multi-stage
